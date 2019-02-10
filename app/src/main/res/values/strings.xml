@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Popular News</string>
+    <string name="app_name">热门新闻</string>
+    <string name="date_to_time">\u2022%1$s</string>
 </resources>

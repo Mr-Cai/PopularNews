@@ -126,7 +126,6 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
         adapter!!.setOnItemClickListener(object : Adapter.OnItemClickListener {
 
             override fun onItemClick(view: View, position: Int) {
-                Toast.makeText(this@MainActivity, "xxx0", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@MainActivity, NewsDetailActivity::class.java)
                 val article = articles[position]
                 intent.putExtra("url", article.url)

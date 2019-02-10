@@ -14,6 +14,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.util.Util
 import com.haerul.popularnews.models.Article
 import kotlinx.android.synthetic.main.item.view.*
 
@@ -35,26 +36,26 @@ class Adapter(private val articles: MutableList<Article>, private val context: C
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
         requestOptions.centerCrop()
         Glide.with(context).load(model.urlToImage).apply(requestOptions)
-                .listener(object :RequestListener<Drawable> {
+                .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        itemView.prograss_load_photo.visibility = View.GONE
+                        itemView.loadProgress.visibility = View.GONE
                         return false
                     }
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        itemView.prograss_load_photo.visibility = View.GONE
+                        itemView.loadProgress.visibility = View.GONE
                         return false
                     }
 
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(itemView.coverPic)
-        itemView.title.text = model.title
-        itemView.desc.text = model.description
-        itemView.source.text = model.source!!.name
-        itemView.time.text = " \u2022 " + Utils.DateToTimeFormat(model.publishedAt!!)
-        itemView.publishedAt.text = Utils.DateFormat(model.publishedAt!!)
-        itemView.author.text = model.author
+        itemView.titleTxT.text = model.title
+        itemView.descTxT.text = model.description
+        itemView.sourceTxT.text = model.source!!.name
+        itemView.timeTxT.text = String.format(context.resources.getString(R.string.date_to_time), Utils.DateToTimeFormat(model.publishedAt!!))
+        itemView.dateTxT.text = Utils.DateFormat(model.publishedAt!!)
+        itemView.authorTxT.text = model.author
 
     }
 
@@ -75,6 +76,7 @@ class Adapter(private val articles: MutableList<Article>, private val context: C
         init {
             itemView.setOnClickListener(this)
         }
+
         override fun onClick(v: View) = onItemClickListener.onItemClick(v, adapterPosition)
     }
 }

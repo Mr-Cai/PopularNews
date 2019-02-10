@@ -20,6 +20,7 @@ import com.haerul.popularnews.api.ApiClient
 import com.haerul.popularnews.api.ApiInterface
 import com.haerul.popularnews.models.Article
 import com.haerul.popularnews.models.News
+import kotlinx.android.synthetic.main.item.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    fun loadJson(keyword: String) {
+    fun LoadJson(keyword: String) {
 
         errorLayout!!.visibility = View.GONE
         swipeRefreshLayout!!.isRefreshing = true
@@ -74,9 +75,9 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         val call: Call<News>
 
-        call = when {
-            keyword.isNotEmpty() -> apiInterface.getNewsSearch(keyword, language, "publishedAt", API_KEY)
-            else -> apiInterface.getNews(country, API_KEY)
+        when {
+            keyword.isNotEmpty() -> call = apiInterface.getNewsSearch(keyword, language, "publishedAt", API_KEY)
+            else -> call = apiInterface.getNews(country, API_KEY)
         }
 
         call.enqueue(object : Callback<News> {
@@ -91,9 +92,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                     adapter = Adapter(articles, this@MainActivity)
                     recyclerView!!.adapter = adapter
                     adapter!!.notifyDataSetChanged()
-
                     initListener()
-
                     topHeadline!!.visibility = View.VISIBLE
                     swipeRefreshLayout!!.isRefreshing = false
 
@@ -132,8 +131,9 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private fun initListener() {
         adapter!!.setOnItemClickListener(object : Adapter.OnItemClickListener {
+
             override fun onItemClick(view: View, position: Int) {
-                val imageView = view.findViewById<ImageView>(R.id.img)
+                Toast.makeText(this@MainActivity, "xxx0", Toast.LENGTH_SHORT).show()
                 val intent = Intent(this@MainActivity, NewsDetailActivity::class.java)
                 val article = articles[position]
                 intent.putExtra("url", article.url)
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
                 intent.putExtra("source", article.source!!.name)
                 intent.putExtra("author", article.author)
 
-                val pair = Pair.create<View, String>(imageView, ViewCompat.getTransitionName(imageView))
+                val pair = Pair.create<View, String>(view.coverPic, ViewCompat.getTransitionName(view.coverPic))
                 val optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
                         this@MainActivity,
                         pair
@@ -185,11 +185,11 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onRefresh() {
-        loadJson("")
+        LoadJson("")
     }
 
     private fun onLoadingSwipeRefresh(keyword: String) {
-        swipeRefreshLayout!!.post { loadJson(keyword) }
+        swipeRefreshLayout!!.post { LoadJson(keyword) }
     }
 
     private fun showErrorMessage(imageView: Int, title: String, message: String) {

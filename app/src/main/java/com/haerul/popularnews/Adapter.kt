@@ -5,11 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -30,37 +26,39 @@ class Adapter(private val articles: MutableList<Article>, private val context: C
         return MyViewHolder(view, onItemClickListener!!)
     }
 
-    override fun onBindViewHolder(holders: MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val model = articles[position]
-
+        val itemView = holder.itemView
         val requestOptions = RequestOptions()
         requestOptions.placeholder(Utils.randomDrawbleColor)
         requestOptions.error(Utils.randomDrawbleColor)
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
         requestOptions.centerCrop()
 
-        Glide.with(context)
-                .load(model.urlToImage)
+       /* Glide.with(context)
+                .load(model.urlToImage!!)
                 .apply(requestOptions)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
-                        holders.progressBar.visibility = View.GONE
+                        itemView.prograss_load_photo.visibility = View.GONE
                         return false
                     }
 
                     override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
-                        holders.progressBar.visibility = View.GONE
+                        itemView.prograss_load_photo.visibility = View.GONE
                         return false
                     }
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .into(holders.itemView.img)
-        holders.title.text = model.title
-        holders.desc.text = model.description
-        holders.source.text = model.source!!.name
-        holders.time.text = " \u2022 " + Utils.DateToTimeFormat(model.publishedAt!!)
-        holders.published_ad.text = Utils.DateFormat(model.publishedAt!!)
-        holders.author.text = model.author
+                .into(itemView.coverPic)
+*/
+
+        itemView.title.text = model.title
+        itemView.desc.text = model.description
+        itemView.source.text = model.source!!.name
+        itemView.time.text = " \u2022 " + Utils.DateToTimeFormat(model.publishedAt!!)
+        itemView.publishedAt.text = Utils.DateFormat(model.publishedAt!!)
+        itemView.author.text = model.author
 
     }
 
@@ -76,31 +74,11 @@ class Adapter(private val articles: MutableList<Article>, private val context: C
         fun onItemClick(view: View, position: Int)
     }
 
-    inner class MyViewHolder(itemView: View, internal var onItemClickListener: OnItemClickListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-
-        internal var title: TextView
-        internal var desc: TextView
-        internal var author: TextView
-        internal var published_ad: TextView
-        internal var source: TextView
-        internal var time: TextView
-        internal var progressBar: ProgressBar
-
+    inner class MyViewHolder(itemView: View, private var onItemClickListener: OnItemClickListener) :
+            RecyclerView.ViewHolder(itemView), View.OnClickListener {
         init {
-
             itemView.setOnClickListener(this)
-            title = itemView.findViewById(R.id.title)
-            desc = itemView.findViewById(R.id.desc)
-            author = itemView.findViewById(R.id.author)
-            published_ad = itemView.findViewById(R.id.publishedAt)
-            source = itemView.findViewById(R.id.source)
-            time = itemView.findViewById(R.id.time)
-            progressBar = itemView.findViewById(R.id.prograss_load_photo)
-
         }
-
-        override fun onClick(v: View) {
-            onItemClickListener.onItemClick(v, adapterPosition)
-        }
+        override fun onClick(v: View) = onItemClickListener.onItemClick(v, adapterPosition)
     }
 }

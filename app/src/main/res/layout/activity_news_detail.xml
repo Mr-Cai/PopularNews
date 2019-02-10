@@ -54,7 +54,7 @@
                     android:layout_alignParentBottom="true"
                     android:src="@drawable/bottom_shadow"
                     android:id="@+id/img2"
-                    android:layout_alignBottom="@id/img"
+                    android:layout_alignBottom="@id/coverPic"
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="80dp" />
@@ -204,7 +204,7 @@
         android:adjustViewBounds="true"
         app:layout_anchorGravity="right|end|bottom"
         android:clickable="false"
-        android:layout_below="@id/img"
+        android:layout_below="@id/coverPic"
         android:background="@drawable/round_white"
         android:layout_width="wrap_content"
         android:padding="5dp"

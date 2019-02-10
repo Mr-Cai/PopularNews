@@ -34,25 +34,21 @@ class Adapter(private val articles: MutableList<Article>, private val context: C
         requestOptions.error(Utils.randomDrawbleColor)
         requestOptions.diskCacheStrategy(DiskCacheStrategy.ALL)
         requestOptions.centerCrop()
-
-       /* Glide.with(context)
-                .load(model.urlToImage!!)
-                .apply(requestOptions)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Drawable>, isFirstResource: Boolean): Boolean {
+        Glide.with(context).load(model.urlToImage).apply(requestOptions)
+                .listener(object :RequestListener<Drawable> {
+                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                         itemView.prograss_load_photo.visibility = View.GONE
                         return false
                     }
 
-                    override fun onResourceReady(resource: Drawable, model: Any, target: Target<Drawable>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
+                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
                         itemView.prograss_load_photo.visibility = View.GONE
                         return false
                     }
+
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(itemView.coverPic)
-*/
-
         itemView.title.text = model.title
         itemView.desc.text = model.description
         itemView.source.text = model.source!!.name

@@ -63,56 +63,49 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     }
 
-    fun LoadJson(keyword: String) {
-
+    private fun loadJson(keyword: String) {
         errorLayout!!.visibility = View.GONE
         swipeRefreshLayout!!.isRefreshing = true
-
         val apiInterface = ApiClient.apiClient.create(ApiInterface::class.java)
-
         val country = Utils.country
         val language = Utils.language
-
         val call: Call<News>
-
-        when {
-            keyword.isNotEmpty() -> call = apiInterface.getNewsSearch(keyword, language, "publishedAt", API_KEY)
-            else -> call = apiInterface.getNews(country, API_KEY)
+        call = when {
+            keyword.isNotEmpty() -> apiInterface.getNewsSearch(keyword, language, "publishedAt", API_KEY)
+            else -> apiInterface.getNews(country, API_KEY)
         }
 
         call.enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
-                if (response.isSuccessful && response.body()!!.article != null) {
+                when {
+                    response.isSuccessful && response.body()!!.article != null -> {
+                        if (!articles.isEmpty()) {
+                            articles.clear()
+                        }
+                        articles = response.body()!!.article!!
+                        adapter = Adapter(articles, this@MainActivity)
+                        recyclerView!!.adapter = adapter
+                        adapter!!.notifyDataSetChanged()
+                        initListener()
+                        topHeadline!!.visibility = View.VISIBLE
+                        swipeRefreshLayout!!.isRefreshing = false
 
-                    if (!articles.isEmpty()) {
-                        articles.clear()
+
                     }
+                    else -> {
+                        topHeadline!!.visibility = View.INVISIBLE
+                        swipeRefreshLayout!!.isRefreshing = false
+                        val errorCode = when (response.code()) {
+                            404 -> "404 not found"
+                            500 -> "500 server broken"
+                            else -> "unknown error"
+                        }
 
-                    articles = response.body()!!.article!!
-                    adapter = Adapter(articles, this@MainActivity)
-                    recyclerView!!.adapter = adapter
-                    adapter!!.notifyDataSetChanged()
-                    initListener()
-                    topHeadline!!.visibility = View.VISIBLE
-                    swipeRefreshLayout!!.isRefreshing = false
-
-
-                } else {
-
-                    topHeadline!!.visibility = View.INVISIBLE
-                    swipeRefreshLayout!!.isRefreshing = false
-
-                    val errorCode = when (response.code()) {
-                        404 -> "404 not found"
-                        500 -> "500 server broken"
-                        else -> "unknown error"
+                        showErrorMessage(
+                                R.drawable.no_result,
+                                "No Result",
+                                "Please Try Again!\n$errorCode")
                     }
-
-                    showErrorMessage(
-                            R.drawable.no_result,
-                            "No Result",
-                            "Please Try Again!\n$errorCode")
-
                 }
             }
 
@@ -185,11 +178,11 @@ class MainActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
     }
 
     override fun onRefresh() {
-        LoadJson("")
+        loadJson("")
     }
 
     private fun onLoadingSwipeRefresh(keyword: String) {
-        swipeRefreshLayout!!.post { LoadJson(keyword) }
+        swipeRefreshLayout!!.post { loadJson(keyword) }
     }
 
     private fun showErrorMessage(imageView: Int, title: String, message: String) {
